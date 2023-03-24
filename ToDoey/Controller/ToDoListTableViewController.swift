@@ -14,17 +14,9 @@ class ToDoListTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(dataFilePath!)
         configureTableView()
         cofigureNavigationBar()
-
-        var item = Item()
-        item.title = "Find Mike"
-        itemArray.append(item)
-
-        saveItems()
         loadItems()
-
     }
 
     // MARK: - Table view data source
