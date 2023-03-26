@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import CoreData
+
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -23,6 +25,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func configureToDoListController() -> UIViewController {
         let toDoVC = UINavigationController(rootViewController: ToDoListTableViewController())
         return toDoVC
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 }
 

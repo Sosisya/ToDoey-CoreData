@@ -6,14 +6,18 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListTableViewController: UITableViewController {
-
     var itemArray = [Item]()
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
+    let searchBar = UISearchController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        configureSearchBar()
         configureTableView()
         cofigureNavigationBar()
         loadItems()
@@ -33,11 +37,20 @@ class ToDoListTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
+    private func configureSearchBar() {
+        searchBar.delegate = self
+        searchBar.searchBar.delegate = self
+        navigationItem.searchController = searchBar
+        searchBar.searchBar.placeholder = "Search"
+    }
     private func configureTableView() {
         tableView.register(ToDoItemTableViewCell.self, forCellReuseIdentifier: "ToDoItemTableViewCell")
     }
@@ -53,8 +66,10 @@ class ToDoListTableViewController: UITableViewController {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { action  in
-            var newItem = Item()
+
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
+            newItem.done = false
             self.itemArray.append(newItem)
             self.saveItems()
 
@@ -69,26 +84,32 @@ class ToDoListTableViewController: UITableViewController {
     }
 
     private func saveItems() {
-        let encoder = PropertyListEncoder()
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+            try context.save()
         }  catch {
             print("error: \(error)")
         }
         tableView.reloadData()
     }
 
-    private func loadItems() {
-        if let data = try?  Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            }  catch {
-                print("error: \(error)")
-            }
+    private func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print("error: \(error)")
         }
         tableView.reloadData()
+    }
+}
+
+// - MARK: - Search bar methods
+extension ToDoListTableViewController:  UISearchControllerDelegate, UISearchBarDelegate {
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] % @", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadItems(with: request)
     }
 }
 
