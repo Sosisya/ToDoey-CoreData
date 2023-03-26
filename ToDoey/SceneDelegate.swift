@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = configureToDoListController()
+        window.rootViewController = configureCategoryController()
         self.window = window
         window.makeKeyAndVisible()
     }
@@ -25,6 +25,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func configureToDoListController() -> UIViewController {
         let toDoVC = UINavigationController(rootViewController: ToDoListTableViewController())
         return toDoVC
+    }
+
+    func configureCategoryController() -> UIViewController {
+        let categoryVC = UINavigationController(rootViewController: CategoryTableViewController())
+        return categoryVC
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

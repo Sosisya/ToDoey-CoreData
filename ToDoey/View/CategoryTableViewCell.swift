@@ -1,7 +1,14 @@
+//
+//  CategoryTableViewCell.swift
+//  ToDoey
+//
+//  Created by Луиза Самойленко on 26.03.2023.
+//
+
 import UIKit
 
-class ToDoItemTableViewCell: UITableViewCell {
-
+class CategoryTableViewCell: UITableViewCell {
+//
 //    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 //        super.init(style: style, reuseIdentifier: reuseIdentifier)
 //        commonInit()
@@ -13,6 +20,7 @@ class ToDoItemTableViewCell: UITableViewCell {
 //    }
 //
 //    private func commonInit() {
-//
+//        
 //    }
 }
+
